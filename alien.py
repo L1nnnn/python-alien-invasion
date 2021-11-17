@@ -3,6 +3,7 @@
 import sys
 import pygame
 from pygame import image
+from pygame import sprite
 
 import game as g
 
@@ -26,16 +27,22 @@ def run_game():
     }
     ship=Spaceship(screen,backrect)
     bullets = Group()
+    monsters=Group()
+    g.add_monster(screen,monsters,backrect)
     while True:
-        g.check_event(screen,ship,bullets)
+        g.check_event(screen,ship,bullets,monsters)
         screen.blit(backimage,(backrect["x"],backrect["y"]))
         ship.update()
         ship.drawShip()
-        bullets.update()
+        for monster in monsters.sprites():
+            monster.draw_plane()
         for bullet in bullets.sprites():
+            if(bullet.y<screen.get_rect().y):
+                bullets.remove(bullet)
             bullet.draw_bullet()
+        bullets.update(monsters,bullets)
+        monsters.update()
         pygame.display.flip() 
-
                          
 
 if __name__ == "__main__":
